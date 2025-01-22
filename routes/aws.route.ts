@@ -8,4 +8,6 @@ awsRouter.post("/upload", isAuthenticated, upload);
 
 awsRouter.post("/upload-file", isAuthenticated, uploadFile);
 
+console.log("aws route connected");
+
 export default awsRouter;
