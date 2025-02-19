@@ -31,6 +31,7 @@ const allowedOrigins = [
   "http://localhost:3002",
   "http://localhost:3003",
   "https://www.bskilling.com",
+  "https://www.dev.bskilling.com",
 ];
 
 app.use(

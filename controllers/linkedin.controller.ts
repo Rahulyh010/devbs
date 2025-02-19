@@ -1,7 +1,9 @@
 import axios from "axios";
 import { Request, Response } from "express";
 
-const redirectUri = "https://www.bskilling.com/reviews/write-a-review"; // Ensure this matches LinkedIn App settings
+const redirectUri =
+  process.env.LINKEDIN_REDIRECT_URI ??
+  "https://www.bskilling.com/reviews/write-a-review"; // Ensure this matches LinkedIn App settings
 
 export const linkedInAuthCallback = async (
   req: Request,
