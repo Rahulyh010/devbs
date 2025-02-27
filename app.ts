@@ -11,17 +11,64 @@ import blogRouter from "./routes/blog.route";
 import awsRouter from "./routes/aws.route";
 import reviewRoutes from "./routes/review.routes";
 import { linkedInAuthCallback } from "./controllers/linkedin.controller";
+import { errorHandler } from "./utils/helpers1/globalErrorHandler";
+import requestLogger from "./utils/requestLogger";
+import logger from "./utils/logger";
+import AllRoutes from "./routes/index";
+import helmet from "helmet";
+import env from "./utils/env";
+import rateLimit from "express-rate-limit";
+import compression from "compression";
+import hpp from "hpp";
 
 export const app = express();
 
-app.use(express.json());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https://*"],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
-// cookie parser
+const storage = multer.memoryStorage(); // Store files in memory
+const upload = multer({ storage: storage });
+
+// Apply multer middleware for file uploads
+app.use(upload.single("file"));
+// Request parsing
+app.use(express.json({ limit: "10kb" }));
+// app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Security middlewares
+// app.use(ExpressMongoSanitize());
+app.use(hpp());
+app.use(cookieParser());
+app.use(compression());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: env.NODE_ENV === "production" ? 100 : 1000,
+  message: "Too many requests from this IP, please try again later",
+});
+app.use(limiter);
+
+// app.use(express.json());
+
+// // cookie parser
 app.use(cookieParser());
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-app.use(upload.any());
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
+// app.use(upload.any());
 
 const allowedOrigins = [
   "https://admin.bskilling.com",
@@ -42,6 +89,16 @@ app.use(
     allowedHeaders: "Content-Type,Authorization",
   })
 );
+
+const gracefulShutdown = () => {
+  logger.warn("⚠️ Shutting down gracefully...");
+  process.exit(0);
+};
+
+process.on("SIGINT", gracefulShutdown);
+process.on("SIGTERM", gracefulShutdown);
+
+app.use(requestLogger);
 app.get("/api/auth/callback/linkedin", linkedInAuthCallback);
 // route
 app.use(
@@ -52,6 +109,8 @@ app.use(
   awsRouter,
   reviewRoutes
 );
+app.use("/api", AllRoutes);
+app.use(errorHandler);
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
