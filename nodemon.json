@@ -1,0 +1,6 @@
+{
+  "watch": [".env", "dist"],
+  "ext": "js,env",
+  "exec": "node dist/app.js",
+  "ignore": ["**/__tests__/**", "**/node_modules/**"]
+}

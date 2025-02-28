@@ -79,6 +79,7 @@ const allowedOrigins = [
   "http://localhost:3003",
   "https://www.bskilling.com",
   "https://www.dev.bskilling.com",
+  "https://devadmin.bskilling.com",
 ];
 
 app.use(

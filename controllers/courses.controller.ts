@@ -180,6 +180,14 @@ export const getCourse = async (req: Request, res: Response): Promise<void> => {
       .populate({ path: "previewImage", select: "viewUrl" }) // Populate only viewUrl from previewImage (if exists)
       .populate({ path: "logoUrl", select: "viewUrl" }) // Populate only viewUrl from logoUrl (if exists);
       .populate({
+        path: "certification",
+        populate: { path: "image", select: "viewUrl" },
+      })
+      .populate({
+        path: "partnerShip",
+        populate: { path: "image", select: "viewUrl" },
+      })
+      .populate({
         path: "skills",
         populate: { path: "logo", select: "viewUrl" },
       })
