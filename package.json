@@ -8,10 +8,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start1": "nodemon server.ts",
     "dev1": "nodemon server.ts",
-    "dev": "node dist/app.js",
     "clean": "rimraf dist",
     "build": "npm run clean && esbuild server.ts --bundle --platform=node --outfile=dist/server.js",
-    "start": "nodemon --watch src --ext ts --exec \"npm run build && node dist/server.js\""
+    "start": "node dist/server.js",
+    "dev": "nodemon --watch src --ext ts --exec \"npm run build && node dist/server.js\""
   },
   "keywords": [],
   "author": "",
