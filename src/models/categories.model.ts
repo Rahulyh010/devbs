@@ -9,7 +9,11 @@ const MainCategorySchema = new Schema(
       minlength: 3,
       maxlength: 100,
     },
-
+    type: {
+      type: String,
+      enum: ["b2i", "b2b", "b2c", "b2g"],
+      required: true,
+    },
     slug: {
       type: String,
       required: true,

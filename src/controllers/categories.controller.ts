@@ -16,6 +16,7 @@ export const createCategory = async (
   res: Response
 ): Promise<void> => {
   try {
+    console.log(req.body);
     const slug = generateSlug(req.body.name);
     const category = new CategoryModel({
       ...req.body,
@@ -44,13 +45,20 @@ export const getAllCategories = async (
 ): Promise<void> => {
   const page = parseInt(req.query.page as string, 10) || 1;
   const limit = parseInt(req.query.limit as string, 10) || 10;
+  const type = req.query.type as "b2c" | "b2b" | "b2i" | "b2g";
 
   const skip = (page - 1) * limit;
+  const filter = {
+    ...(req.query.type && {
+      type,
+    }),
+  };
 
-  const categories = await CategoryModel.find()
+  const categories = await CategoryModel.find(filter)
     .skip(skip)
     .limit(limit)
     .populate("logo", "viewUrl");
+  console.log(categories);
 
   const totalCategories = await CategoryModel.countDocuments();
 

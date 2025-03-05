@@ -7,12 +7,14 @@ export const createCategoryValidator = {
       .min(3, "Name is required")
       .max(100, "Name must be less than 100 characters"),
     logo: z.string().length(24, "Logo is required"),
+    type: z.enum(["b2i", "b2b", "b2c", "b2g"]),
   }),
 };
 
 export const fetchCategoryvalidator = z.object({
   page: z.coerce.number().default(1),
   limit: z.coerce.number().default(40),
+  type: z.enum(["b2i", "b2b", "b2c", "b2g"]).optional(),
 });
 
 export const updateCategorySchema = z.object({
