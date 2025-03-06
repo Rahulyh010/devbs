@@ -33,13 +33,13 @@ export const baseCurriculumSchema = z.object({
       })
     )
     .optional(),
-  whyJoin: z.string().optional(),
 });
 
 // Draft course validator: all fields are optional.
 export const draftCourseSchema = z.object({
   title: z.string().optional(),
   slug: z.string().optional(),
+  outcomes: z.array(z.string()).optional(),
   variant: z.number().optional(),
   price: z
     .object({
@@ -98,6 +98,7 @@ export const draftCourseSchema = z.object({
 // Published course validator: all fields are required.
 export const publishedCourseSchema = z.object({
   title: z.string(),
+  outcomes: z.array(z.string()).optional(),
   description: z.string(),
   durationHours: z.number(),
   variant: z.number().optional(),

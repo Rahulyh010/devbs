@@ -108,7 +108,7 @@ export interface ICourse extends Document {
 
 const CourseSchema: Schema = new Schema({
   title: { type: String },
-
+  outcomes: [{ type: String }],
   variant: { type: Number },
   slug: { type: String },
   description: { type: String },
