@@ -24,7 +24,6 @@ const MainCategorySchema = new Schema(
     },
     logo: {
       type: Schema.Types.ObjectId,
-      required: true,
       ref: "file",
     },
   },

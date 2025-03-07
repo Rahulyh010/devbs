@@ -2,8 +2,8 @@
 import { z } from "zod";
 
 export const baseOverviewSchema = z.object({
-  title: z.string(),
-  description: z.string(),
+  title: z.string().optional(),
+  description: z.string().optional(),
   keyFeatures: z.array(z.string()).optional(),
   skillsCovered: z.array(z.string()).optional(),
   trainingOption: z.string().optional(),

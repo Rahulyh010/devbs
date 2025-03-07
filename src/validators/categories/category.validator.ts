@@ -6,7 +6,7 @@ export const createCategoryValidator = {
       .string()
       .min(3, "Name is required")
       .max(100, "Name must be less than 100 characters"),
-    logo: z.string().length(24, "Logo is required"),
+    logo: z.string().length(24, "Logo is required").optional(),
     type: z.enum(["b2i", "b2b", "b2c", "b2g"]),
   }),
 };

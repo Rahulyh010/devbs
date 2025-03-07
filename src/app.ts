@@ -43,7 +43,7 @@ const upload = multer({ storage: storage });
 // Apply multer middleware for file uploads
 app.use(upload.single("file"));
 // Request parsing
-app.use(express.json({ limit: "10kb" }));
+app.use(express.json({ limit: "100kb" }));
 // app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
