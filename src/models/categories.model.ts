@@ -26,6 +26,10 @@ const MainCategorySchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "file",
     },
+    isPublished: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

@@ -52,13 +52,17 @@ export const getAllCategories = async (
     ...(req.query.type && {
       type,
     }),
+    ...(req.query.isPublished && {
+      isPublished: req.query.isPublished,
+    }),
   };
+  console.log(filter);
 
   const categories = await CategoryModel.find(filter)
     .skip(skip)
     .limit(limit)
     .populate("logo", "viewUrl");
-  console.log(categories);
+  // console.log(categories);
 
   const totalCategories = await CategoryModel.countDocuments();
 

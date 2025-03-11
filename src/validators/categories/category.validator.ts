@@ -15,6 +15,7 @@ export const fetchCategoryvalidator = z.object({
   page: z.coerce.number().default(1),
   limit: z.coerce.number().default(40),
   type: z.enum(["b2i", "b2b", "b2c", "b2g"]).optional(),
+  isPublished: z.coerce.boolean().optional(),
 });
 
 export const updateCategorySchema = z.object({

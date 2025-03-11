@@ -81,6 +81,7 @@ const allowedOrigins = [
   "https://www.dev.bskilling.com",
   "https://devadmin.bskilling.com",
   "https://s14vl5ld-3000.inc1.devtunnels.ms",
+  "https://dev.bskilling.com",
 ];
 
 app.use(
