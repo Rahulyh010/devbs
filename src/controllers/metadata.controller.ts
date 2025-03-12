@@ -120,13 +120,13 @@ export const getMetaById = async (req: Request, res: Response) => {
     const meta = await MetaData.findOne({
       courseId: id,
     });
-
     if (!meta) {
+      const newMeta = new MetaData({ courseId: id /* other default fields */ });
+      await newMeta.save();
       resHandler({
         res,
-        success: false,
-        message: "Meta data not found",
-        code: 404,
+        message: "Meta data fetched successfully",
+        data: meta,
       });
       return;
     }
