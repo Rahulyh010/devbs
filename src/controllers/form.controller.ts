@@ -24,72 +24,47 @@ export const sendPhoneOTP = async (req: Request, res: Response) => {
   // }
 
   let student: any = await Student.findOne({
-    "Student RollNo": rollNo,
-    // Student_Phone: phone,
+    "Student RollNo": { $regex: rollNo.trim() + "$" }, // Case-insensitive search
   });
 
-  const l = true;
-
-  // if (l) {
-  //   console.log(student);
-  //   const l = rollNo.length;
-  //   const st = student.toObject();
-
-  //   const currentRollNo = String(st["Student RollNo"])
-  //     .split("")
-  //     .reverse()
-  //     .join("");
-  //   if (currentRollNo.slice(0, l).split("").reverse().join("") === rollNo) {
-  //     console.log(
-  //       currentRollNo.slice(0, l).split("").reverse().join(""),
-  //       rollNo,
-  //       "true"
-  //     );
-  //   } else {
-  //     console.log(
-  //       currentRollNo.slice(0, l).split("").reverse().join(""),
-  //       rollNo,
-  //       "false"
-  //     );
-  //   }
-
-  //   return;
-  // }
-
   if (!student) {
-    const rollNoInput = rollNo.trim(); // Ensure no extra spaces
-    let allStudents = await Student.find({});
-
-    // Convert Mongoose documents to plain objects using map
-    allStudents = allStudents.map((s) => s.toObject());
-
-    // Use endsWith to check if the roll number ends with the input
-    student = allStudents.find((s) =>
-      String(s["Student RollNo"]).endsWith(rollNoInput)
-    );
-
-    if (!student) {
-      return res.status(400).json({ message: "Student not found" });
-    }
-    // const l = rollNo.length;
-
-    // let allStudents = await Student.find({});
-
-    // allStudents = allStudents.map((s) => s.toObject());
-
-    // student = allStudents.find((s) => {
-    //   const currentRollNo = String(s["Student RollNo"])
-    //     .split("")
-    //     .reverse()
-    //     .join("");
-    //   return currentRollNo.slice(0, l).split("").reverse().join("") === rollNo;
-    // });
-
-    // if (!student) {
-    //   return res.status(400).json({ message: "Student not found" });
-    // }
+    return res.status(400).json({ message: "Student not found" });
   }
-  student = Student.hydrate(student);
+
+  // if (!student) {
+  //   const rollNoInput = rollNo.trim(); // Ensure no extra spaces
+  //   let allStudents = await Student.find({});
+
+  //   // Convert Mongoose documents to plain objects using map
+  //   allStudents = allStudents.map((s) => s.toObject());
+
+  //   // Use endsWith to check if the roll number ends with the input
+  //   student = allStudents.find((s) =>
+  //     String(s["Student RollNo"]).endsWith(rollNoInput)
+  //   );
+
+  //   if (!student) {
+  //     return res.status(400).json({ message: "Student not found" });
+  //   }
+  //   // const l = rollNo.length;
+
+  //   // let allStudents = await Student.find({});
+
+  //   // allStudents = allStudents.map((s) => s.toObject());
+
+  //   // student = allStudents.find((s) => {
+  //   //   const currentRollNo = String(s["Student RollNo"])
+  //   //     .split("")
+  //   //     .reverse()
+  //   //     .join("");
+  //   //   return currentRollNo.slice(0, l).split("").reverse().join("") === rollNo;
+  //   // });
+
+  //   // if (!student) {
+  //   //   return res.status(400).json({ message: "Student not found" });
+  //   // }
+  // }
+  // student = Student.hydrate(student);
   if (student.attempted) {
     return res
       .status(400)
@@ -172,45 +147,13 @@ export const verifyOTP = async (req: Request, res: Response) => {
       .json({ message: "Student ID, phone and OTP are required" });
   }
 
-  // Lookup student
-  // First try to find the student using the original roll number
-  let student = await Student.findOne({ "Student RollNo": rollNo });
+  let student: any = await Student.findOne({
+    "Student RollNo": { $regex: rollNo.trim() + "$" }, // Case-insensitive search
+  });
 
   if (!student) {
-    const rollNoInput = rollNo.trim(); // Ensure no extra spaces
-    let allStudents = await Student.find({});
-
-    // Convert Mongoose documents to plain objects using map
-    allStudents = allStudents.map((s) => s.toObject());
-
-    // Use endsWith to check if the roll number ends with the input
-    student = allStudents.find((s) =>
-      String(s["Student RollNo"]).endsWith(rollNoInput)
-    );
-
-    if (!student) {
-      return res.status(400).json({ message: "Student not found" });
-    }
-    // const l = rollNo.length;
-
-    // let allStudents = await Student.find({});
-
-    // allStudents = allStudents.map((s) => s.toObject());
-
-    // student = allStudents.find((s) => {
-    //   const currentRollNo = String(s["Student RollNo"])
-    //     .split("")
-    //     .reverse()
-    //     .join("");
-    //   return currentRollNo.slice(0, l).split("").reverse().join("") === rollNo;
-    // });
-
-    // if (!student) {
-    //   return res.status(400).json({ message: "Student not found" });
-    // }
+    return res.status(400).json({ message: "Student not found" });
   }
-
-  student = Student.hydrate(student);
   // Continue with the rest of your code using the found student
 
   // Retrieve stored OTP
@@ -255,40 +198,12 @@ export const submitExam = async (req: Request, res: Response) => {
       });
     }
 
-    // 1. Lookup the student using roll number.
-    let student = await Student.findOne({ "Student RollNo": rollNo });
+    let student: any = await Student.findOne({
+      "Student RollNo": { $regex: rollNo.trim() + "$" }, // Case-insensitive search
+    });
+
     if (!student) {
-      const rollNoInput = rollNo.trim(); // Ensure no extra spaces
-      let allStudents = await Student.find({});
-
-      // Convert Mongoose documents to plain objects using map
-      allStudents = allStudents.map((s) => s.toObject());
-
-      // Use endsWith to check if the roll number ends with the input
-      student = allStudents.find((s) =>
-        String(s["Student RollNo"]).endsWith(rollNoInput)
-      );
-
-      if (!student) {
-        return res.status(400).json({ message: "Student not found" });
-      }
-      // const l = rollNo.length;
-
-      // let allStudents = await Student.find({});
-
-      // allStudents = allStudents.map((s) => s.toObject());
-
-      // student = allStudents.find((s) => {
-      //   const currentRollNo = String(s["Student RollNo"])
-      //     .split("")
-      //     .reverse()
-      //     .join("");
-      //   return currentRollNo.slice(0, l).split("").reverse().join("") === rollNo;
-      // });
-
-      // if (!student) {
-      //   return res.status(400).json({ message: "Student not found" });
-      // }
+      return res.status(400).json({ message: "Student not found" });
     }
     const plainStudent = student.toObject();
     const courseIDValue = plainStudent["Course ID"];

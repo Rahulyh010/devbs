@@ -8,6 +8,7 @@ import metadataRoutes from "./metadata.routes";
 import leadRoutes from "./leads/lead.routes";
 import formRoutes from "./form";
 import questionRoutes from "./question.routes";
+import studentRoutes from "./students.routes";
 const router = Router();
 
 router.use("/categories", categoryRoutes);
@@ -19,5 +20,6 @@ router.use("/meta-data", metadataRoutes);
 router.use("/lead", leadRoutes);
 router.use("/form", formRoutes);
 router.use("/questions", questionRoutes);
+router.use("/students", studentRoutes);
 
 export default router;
