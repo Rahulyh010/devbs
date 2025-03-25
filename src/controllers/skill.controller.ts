@@ -60,12 +60,7 @@ export const createSkill = async (
  */
 export const getSkills = async (req: Request, res: Response): Promise<void> => {
   try {
-    const skills = await SkillModel.find()
-      .populate({
-        path: "logo",
-        select: "viewUrl", // Fetch only the viewUrl field
-      })
-      .sort({ createdAt: -1 });
+    const skills = await SkillModel.find().sort({ createdAt: -1 });
 
     resHandler({
       res,

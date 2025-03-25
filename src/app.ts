@@ -2,9 +2,7 @@ require("dotenv").config();
 import express, { Request, Response, NextFunction } from "express";
 import multer from "multer";
 import cors from "cors";
-import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-import { ErrorMiddleware } from "./middleware/error";
 import userRouter from "./routes/user.route";
 import courseRouter from "./routes/course.route";
 import blogRouter from "./routes/blog.route";
@@ -23,6 +21,7 @@ import hpp from "hpp";
 
 export const app = express();
 
+// Security middleware - Helmet
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -37,39 +36,29 @@ app.use(
   })
 );
 
-const storage = multer.memoryStorage(); // Store files in memory
+// Configure multer but don't apply it globally
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+// Note: Multer should be applied to specific routes only, not globally
 
-// Apply multer middleware for file uploads
-app.use(upload.single("file"));
 // Request parsing
 app.use(express.json({ limit: "100kb" }));
-// app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: "100kb" }));
 
-// Security middlewares
-// app.use(ExpressMongoSanitize());
+// Security and optimization middlewares
 app.use(hpp());
 app.use(cookieParser());
 app.use(compression());
 
-// Rate limiting
+// Rate limiting - increased to handle more traffic
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: env.NODE_ENV === "production" ? 100 : 1000,
+  max: 10000,
   message: "Too many requests from this IP, please try again later",
 });
 app.use(limiter);
 
-// app.use(express.json());
-
-// // cookie parser
-app.use(cookieParser());
-
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage: storage });
-// app.use(upload.any());
-
+// CORS configuration
 const allowedOrigins = [
   "https://admin.bskilling.com",
   "http://13.233.103.203:3000",
@@ -93,6 +82,7 @@ app.use(
   })
 );
 
+// Graceful shutdown handling
 const gracefulShutdown = () => {
   logger.warn("⚠️ Shutting down gracefully...");
   process.exit(0);
@@ -101,9 +91,14 @@ const gracefulShutdown = () => {
 process.on("SIGINT", gracefulShutdown);
 process.on("SIGTERM", gracefulShutdown);
 
+// Request logging
 app.use(requestLogger);
+
+// Routes
+
+app.use("/api", AllRoutes);
+
 app.get("/api/auth/callback/linkedin", linkedInAuthCallback);
-// route
 app.use(
   "/api/v1",
   userRouter,
@@ -112,9 +107,11 @@ app.use(
   awsRouter,
   reviewRoutes
 );
-app.use("/api", AllRoutes);
+
+// Global error handler
 app.use(errorHandler);
 
+// Health check route
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
     success: true,
@@ -122,11 +119,9 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-// unknown route
+// Unknown route handler
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not found`) as any;
   err.statusCode = 404;
   next(err);
 });
-
-app.use(ErrorMiddleware);
