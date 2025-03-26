@@ -9,10 +9,6 @@ const envSchema = z.object({
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
-  JWT_SECRET: z.string().min(1, "JWT secret is required"),
-  REFRESH_SECRET: z.string().min(1, "Refresh secret is required"),
-  CLIENT_URL: z.string().min(1, "Client URL is required").optional(),
-  SMARTPING_API_KEY: z.string().min(1, "Smartping API key is required"),
 });
 
 // Validate environment variables
