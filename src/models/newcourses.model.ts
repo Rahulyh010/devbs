@@ -112,7 +112,7 @@ const CourseSchema: Schema = new Schema({
   variant: { type: Number },
   slug: { type: String },
   description: { type: String },
-  skills: [{ type: Schema.Types.ObjectId, ref: "skill" }],
+  skills: [{ type: String }],
   tools: [{ type: Schema.Types.ObjectId, ref: "tool" }],
   videoUrl: { type: String },
   whyJoin: [{ type: String }],
