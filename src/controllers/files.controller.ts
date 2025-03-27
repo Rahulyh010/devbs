@@ -76,11 +76,35 @@ export const createFile = async (req: Request, res: Response) => {
       return;
     }
 
-    // Convert image to WebP and optimize
-    const optimizedImage = await sharp(file.buffer)
-      .resize(1080) // Resize width to 1080px (adjustable)
-      .webp({ quality: 80 }) // Convert to WebP with 80% quality
-      .toBuffer();
+    const metadata = await sharp(file.buffer).metadata();
+    const fileExt = file.mimetype.split("/")[1]; // Extract file type (e.g., png, jpg, webp)
+
+    let optimizedImageBuffer = file.buffer; // Default: use the original buffer
+    const fileSize = file.buffer.length; // Get file size in bytes
+
+    console.log(fileSize);
+    if (fileSize > 102400 && fileExt !== "webp") {
+      optimizedImageBuffer = await sharp(file.buffer)
+        .resize(1080) // Resize width to 1080px (adjustable)
+        .webp({ quality: 80 }) // Convert to WebP with 80% quality
+        .toBuffer();
+    }
+
+    // Only optimize if:
+    // 1. It's NOT WebP, OR
+    // 2. It's WebP but width > 1080px
+    // if (metadata.width && metadata.width > 1080) {
+    //   optimizedImageBuffer = await sharp(file.buffer)
+    //     .resize(metadata.width && metadata.width > 1080 ? 1080 : undefined) // Resize if needed
+    //     .webp({ quality: 80 }) // Convert to WebP
+    //     .toBuffer();
+    // }
+
+    // // Convert image to WebP and optimize
+    // const optimizedImage = await sharp(file.buffer)
+    //   .resize(1080) // Resize width to 1080px (adjustable)
+    //   .webp({ quality: 80 }) // Convert to WebP with 80% quality
+    //   .toBuffer();
 
     const fileName = `files/${Date.now()}_${
       file.originalname.split(".")[0]
@@ -89,7 +113,7 @@ export const createFile = async (req: Request, res: Response) => {
     const params = {
       Bucket: process.env.S3_BUCKET_NAME!,
       Key: fileName,
-      Body: optimizedImage,
+      Body: optimizedImageBuffer,
       ContentType: "image/webp",
     };
 
