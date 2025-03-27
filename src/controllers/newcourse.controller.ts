@@ -134,6 +134,7 @@ export const getAllCourses = async (
         category: req.query.category,
       }),
       ...(query.isPublished && { isPublished: query.isPublished === "true" }),
+      ...(query.type && { type: query.type }),
     };
 
     console.log(filter);
@@ -144,6 +145,7 @@ export const getAllCourses = async (
       .populate({ path: "banner", select: "viewUrl" }) // Populate only viewUrl from banner (if exists)
       .populate({ path: "previewImage", select: "viewUrl" }) // Populate only viewUrl from previewImage (if exists)
       .populate({ path: "logoUrl", select: "viewUrl" }); // Populate only viewUrl from logoUrl (if exists)
+
     // @ts-ignore
     const totalCourses = await Course.countDocuments(filter);
     const totalPages = Math.ceil(totalCourses / limit);

@@ -121,7 +121,8 @@ export const updateCategory = async (
 ): Promise<void> => {
   try {
     const { key } = req.params;
-    const category = await CategoryModel.findOneAndUpdate({ key }, req.body, {
+    console.log(key);
+    const category = await CategoryModel.findByIdAndUpdate(key, req.body, {
       new: true,
     });
     if (!category) {

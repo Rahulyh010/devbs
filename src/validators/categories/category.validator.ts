@@ -19,13 +19,8 @@ export const fetchCategoryvalidator = z.object({
 });
 
 export const updateCategorySchema = z.object({
-  key: z
-    .string()
-    .min(1, "Key is required")
-    .regex(/^[a-z0-9_]+$/, "Key must be lowercase with underscores")
-    .optional(),
   name: z.string().min(1, "Name is required").optional(),
-  banner: z.string().url("Banner must be a valid URL").optional(),
+  isPublished: z.coerce.boolean().optional(),
 });
 
 export const deleteCategorySchema = z.object({

@@ -38,6 +38,8 @@ export const baseCurriculumSchema = z.object({
 // Draft course validator: all fields are optional.
 export const draftCourseSchema = z.object({
   title: z.string().optional(),
+  type: z.enum(["b2i", "b2b", "b2c", "b2g"]),
+
   slug: z.string().optional(),
   outcomes: z.array(z.string()).optional(),
   variant: z.number().optional(),
@@ -99,6 +101,7 @@ export const draftCourseSchema = z.object({
 export const publishedCourseSchema = z.object({
   title: z.string(),
   outcomes: z.array(z.string()).optional(),
+  type: z.enum(["b2i", "b2b", "b2c", "b2g"]),
   description: z.string(),
   durationHours: z.number(),
   variant: z.number().optional(),
@@ -136,7 +139,7 @@ export const publishedCourseSchema = z.object({
   highlights: z.array(z.string()),
   banner: z.string().length(24), // required ObjectId string
   previewImage: z.string().length(24),
-  logoUrl: z.string().length(24),
+  logoUrl: z.string().length(24).optional(),
   category: z.string().length(24),
   overview: baseOverviewSchema,
   curriculum: baseCurriculumSchema,
@@ -156,6 +159,7 @@ export const getCoursesQueryValidator = z.object({
   limit: z.coerce.number().int().min(10).optional(),
   isPublished: z.string().optional(), // e.g., "draft" or "published"
   category: z.string().optional(),
+  type: z.enum(["b2i", "b2b", "b2c", "b2g"]).optional(),
 });
 
 export type GetCoursesQuery = z.infer<typeof getCoursesQueryValidator>;

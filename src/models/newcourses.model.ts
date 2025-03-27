@@ -108,6 +108,7 @@ export interface ICourse extends Document {
 
 const CourseSchema: Schema = new Schema({
   title: { type: String },
+  type: { type: String, enum: ["b2i", "b2b", "b2c", "b2g"] },
   outcomes: [{ type: String }],
   variant: { type: Number },
   slug: { type: String },
