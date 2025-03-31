@@ -2,10 +2,37 @@
 import { Request, Response } from "express";
 import Lead from "../models/lead.model";
 import { resHandler } from "../utils/helpers/resHandler";
+import { LeadSchema } from "../validators/lead.validator";
 
 // Create a new lead
 export const createLead = async (req: Request, res: Response) => {
   try {
+    const { email, type, phoneNumber } = req.body as unknown as LeadSchema;
+
+    // Build query object for finding existing lead
+    const query: any = {
+      email,
+      phoneNumber,
+      type,
+    };
+
+    // Only add subCategory to query if it exists in the request body
+    if (req.body.subCategory) {
+      query.subCategory = req.body.subCategory;
+    }
+
+    // Check if a lead with the same details already exists
+    const existingLead = await Lead.findOne(query);
+
+    if (existingLead) {
+      return resHandler({
+        res,
+        success: false,
+        message:
+          "You have already submitted a request for this program. Our team will contact you soon.",
+        code: 409, // Conflict status code
+      });
+    }
     const lead = new Lead(req.body);
     await lead.save();
 

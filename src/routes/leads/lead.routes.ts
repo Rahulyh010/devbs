@@ -8,13 +8,13 @@ import {
   updateLead,
 } from "../../controllers/lead.controller";
 import { validate } from "../../utils/zodValidtor";
-import { leadSchema } from "../../validators/lead.validator";
+import { leadEditSchema, leadSchema } from "../../validators/lead.validator";
 
 const router = Router();
 
 router.post("/", validate({ body: leadSchema }), createLead);
 router.get("/", getLeads);
-router.put("/:id", validate({ body: leadSchema }), updateLead);
+router.put("/:id", validate({ body: leadEditSchema }), updateLead);
 router.delete("/:id", deleteLead);
 
 export default router;

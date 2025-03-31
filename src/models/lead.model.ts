@@ -1,14 +1,44 @@
 import mongoose from "mongoose";
 
+const noteSchema = new mongoose.Schema(
+  {
+    text: { type: String, required: true },
+    status: {
+      type: String,
+      enum: [
+        "NEW",
+        "Attempted to Contact",
+        "Not Contact",
+        "In-conversation",
+        "Prospect",
+        "Not-Eligible",
+        "Not-Interested",
+        "Spam",
+        "Opportunity",
+        "Contact-in-Future",
+        "Closed-Won",
+        "Closed-Lost",
+      ],
+      required: true,
+    },
+    addedBy: { type: String }, // Optional: If you want to track who added the note
+  },
+  { timestamps: true } // This adds createdAt and updatedAt timestamps to each note
+);
+
 const leadSchema = new mongoose.Schema(
   {
     name: { type: String, minlength: 3, required: true },
     email: {
       type: String,
       required: true,
-      match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     },
-    phoneNumber: { type: String, required: true, match: /^\d{10,15}$/ }, // Supports 10-15 digit numbers
+    countryCode: { type: String, required: true },
+    phoneNumber: {
+      type: String,
+      required: true,
+      minlength: 5,
+    },
     category: {
       type: String,
       enum: [
@@ -19,8 +49,31 @@ const leadSchema = new mongoose.Schema(
       ],
       required: true,
     },
-    subCategory: { type: String, required: false },
+    type: { type: String, enum: ["b2i", "b2b", "b2c", "b2g"], required: true },
+    subCategory: { type: String, enum: ["jobs", "skills"] },
     query: { type: String, required: true, minlength: 10 },
+    status: {
+      type: String,
+      enum: [
+        "NEW",
+        "Attempted to Contact",
+        "Not Contact",
+        "In-conversation",
+        "Prospect",
+        "Not-Eligible",
+        "Not-Interested",
+        "Spam",
+        "Opportunity",
+        "Contact-in-Future",
+        "Closed-Won",
+        "Closed-Lost",
+      ],
+      default: "NEW",
+      required: true,
+    },
+    comment: { type: String },
+    websiteUrl: { type: String },
+    notes: [noteSchema],
   },
   { timestamps: true }
 );
