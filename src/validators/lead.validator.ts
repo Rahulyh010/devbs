@@ -81,7 +81,6 @@ export const leadEditSchema = z.object({
       }
     )
     .optional(),
-  comment: z.string().optional(),
   notes: z.array(noteSchema).optional(),
 });
 
