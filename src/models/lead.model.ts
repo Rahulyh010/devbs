@@ -39,17 +39,12 @@ const leadSchema = new mongoose.Schema(
       required: true,
       minlength: 5,
     },
-    category: {
+
+    type: {
       type: String,
-      enum: [
-        "individual_course",
-        "corporate_training",
-        "institutional",
-        "government",
-      ],
+      enum: ["b2i", "b2b", "b2c", "b2g", "general"],
       required: true,
     },
-    type: { type: String, enum: ["b2i", "b2b", "b2c", "b2g"], required: true },
     subCategory: { type: String, enum: ["jobs", "skills"] },
     query: { type: String, required: true, minlength: 10 },
     status: {
@@ -71,7 +66,7 @@ const leadSchema = new mongoose.Schema(
       default: "NEW",
       required: true,
     },
-    comment: { type: String },
+
     websiteUrl: { type: String },
     notes: [noteSchema],
   },

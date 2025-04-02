@@ -8,9 +8,9 @@ export const leadSchema = z
     phoneNumber: z
       .string()
       .regex(/^\d{10,15}$/, "Phone number must be between 10 to 15 digits"),
-    subCategory: z.enum(["", "jobs", "skills"]).optional(),
+    subCategory: z.enum(["jobs", "skills"]).optional(),
     query: z.string().min(10, "Query must be at least 10 characters long"),
-    type: z.enum(["b2i", "b2b", "b2c", "b2g"]),
+    type: z.enum(["b2i", "b2b", "b2c", "b2g", "general"]),
     websiteUrl: z.string().url("Invalid URL format").optional(),
   })
   .superRefine((data, ctx) => {
