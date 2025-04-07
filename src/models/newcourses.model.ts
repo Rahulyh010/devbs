@@ -137,7 +137,12 @@ const CourseSchema: Schema = new Schema({
   banner: { type: Schema.Types.ObjectId, ref: "file" },
   previewImage: { type: Schema.Types.ObjectId, ref: "file" },
   logoUrl: { type: Schema.Types.ObjectId, ref: "file" },
-  category: { type: Schema.Types.ObjectId, ref: "Category" },
+  categories: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+    },
+  ],
   certification: {
     title: { type: String },
   },

@@ -9,6 +9,7 @@ import {
   updateCourse,
   deleteCourse,
   publishCourse,
+  migrateCategoryToArray,
 } from "../../controllers/newcourse.controller";
 // import { validate } from "../../utils/zodValidtor";
 import {
@@ -48,5 +49,9 @@ router.patch("/:id", updateCourse);
 
 // Delete a course
 router.delete("/:id", deleteCourse);
+
+// temp
+
+router.post("/admin/migrate-categories", migrateCategoryToArray);
 
 export default router;

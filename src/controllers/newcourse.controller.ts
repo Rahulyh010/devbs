@@ -33,6 +33,49 @@ export const createDraftCourse = async (
   }
 };
 
+export const migrateCategoryToArray = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    // Direct MongoDB updateMany operation
+    const result = await Course.collection.updateMany(
+      // Find documents where category exists and is not an array
+      {
+        category: { $exists: true },
+        $expr: { $not: { $isArray: "$category" } },
+      },
+      // Update to wrap the category in an array
+      [
+        {
+          $set: {
+            category: ["$category"],
+          },
+        },
+      ]
+    );
+
+    resHandler({
+      res,
+      message: "Category migration completed",
+      data: {
+        matched: result.matchedCount,
+        modified: result.modifiedCount,
+      },
+      code: 200,
+    });
+  } catch (error: any) {
+    console.error("Migration error:", error);
+    resHandler({
+      res,
+      success: false,
+      message: "Migration failed",
+      code: 500,
+      error: error.message,
+    });
+  }
+};
+
 export const updateDraftCourse = async (
   req: Request,
   res: Response
@@ -116,7 +159,6 @@ export const publishCourse = async (
     });
   }
 };
-
 export const getAllCourses = async (
   req: Request,
   res: Response
@@ -128,25 +170,36 @@ export const getAllCourses = async (
 
     const query = req.query as unknown as GetCoursesQuery;
 
-    // Optionally filter by status: if a status query param is provided
-    const filter = {
-      ...(req.query.category && {
-        category: req.query.category,
-      }),
-      ...(query.isPublished && { isPublished: query.isPublished === "true" }),
-      ...(query.type && { type: query.type }),
-    };
+    // Build filter object
+    const filter: any = {};
 
-    console.log(filter);
-    // @ts-ignore
+    // Handle category filtering with proper ObjectId and $in operator
+    if (req.query.category) {
+      const mongoose = require("mongoose"); // Ensure mongoose is imported
+      const categoryId = new mongoose.Types.ObjectId(req.query.category); // Use 'new' keyword
+      filter.category = { $in: [categoryId] };
+    }
+
+    // Add other filters
+    if (query.isPublished !== undefined) {
+      filter.isPublished = query.isPublished === "true";
+    }
+
+    if (query.type) {
+      filter.type = query.type;
+    }
+
+    console.log("Filter:", filter);
+
+    // Rest of your code remains the same
     const courses = await Course.find(filter)
       .skip(skip)
       .limit(limit)
-      .populate({ path: "banner", select: "viewUrl" }) // Populate only viewUrl from banner (if exists)
-      .populate({ path: "previewImage", select: "viewUrl" }) // Populate only viewUrl from previewImage (if exists)
-      .populate({ path: "logoUrl", select: "viewUrl" }); // Populate only viewUrl from logoUrl (if exists)
+      .populate({ path: "banner", select: "viewUrl" })
+      .populate({ path: "previewImage", select: "viewUrl" })
+      .populate({ path: "logoUrl", select: "viewUrl" })
+      .populate({ path: "tools", select: "viewUrl" });
 
-    // @ts-ignore
     const totalCourses = await Course.countDocuments(filter);
     const totalPages = Math.ceil(totalCourses / limit);
 
@@ -164,6 +217,7 @@ export const getAllCourses = async (
       },
     });
   } catch (error) {
+    console.error("Error fetching courses:", error);
     resHandler({
       res,
       success: false,
@@ -173,7 +227,6 @@ export const getAllCourses = async (
     });
   }
 };
-
 export const getCourse = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;

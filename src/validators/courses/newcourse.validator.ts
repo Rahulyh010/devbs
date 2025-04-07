@@ -156,7 +156,7 @@ export const publishedCourseSchema = z.object({
 
 export const getCoursesQueryValidator = z.object({
   page: z.coerce.number().int().min(1).optional(),
-  limit: z.coerce.number().int().min(10).optional(),
+  limit: z.coerce.number().int().min(4).optional(),
   isPublished: z.string().optional(), // e.g., "draft" or "published"
   category: z.string().optional(),
   type: z.enum(["b2i", "b2b", "b2c", "b2g"]).optional(),
