@@ -11,10 +11,13 @@ export const createDraftCourse = async (
 ): Promise<void> => {
   try {
     const validatedData = req.body;
+
+    console.log(validatedData);
     const course = new Course({
       ...validatedData,
       isPublished: false,
     });
+    console.log(course);
     await course.save();
     resHandler({
       res,
@@ -235,6 +238,46 @@ export const getCourse = async (req: Request, res: Response): Promise<void> => {
       .populate({ path: "previewImage", select: "viewUrl" })
       .populate({ path: "logoUrl", select: "viewUrl" })
       // Remove the category populate since it doesn't exist in the schema
+      .populate({
+        path: "tools",
+        populate: { path: "logo", select: "viewUrl" },
+      });
+
+    if (!course) {
+      resHandler({
+        res,
+        success: false,
+        message: "Course not found",
+        code: 404,
+      });
+      return;
+    }
+    resHandler({
+      res,
+      message: "Course fetched successfully",
+      data: course,
+    });
+  } catch (error) {
+    resHandler({
+      res,
+      success: false,
+      message: "Server error",
+      code: 500,
+      error,
+    });
+  }
+};
+
+export const getCourseSlug = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { slug } = req.params; // Changed from id to slug
+    const course = await Course.findOne({ slug, isPublished: true }) // Changed from findById to findOne with slug
+      .populate({ path: "banner", select: "viewUrl" })
+      .populate({ path: "previewImage", select: "viewUrl" })
+      .populate({ path: "logoUrl", select: "viewUrl" })
       .populate({
         path: "tools",
         populate: { path: "logo", select: "viewUrl" },

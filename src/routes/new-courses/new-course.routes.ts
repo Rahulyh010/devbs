@@ -10,6 +10,7 @@ import {
   deleteCourse,
   publishCourse,
   migrateCategoryToArray,
+  getCourseSlug,
 } from "../../controllers/newcourse.controller";
 // import { validate } from "../../utils/zodValidtor";
 import {
@@ -44,6 +45,8 @@ router.get("/", validate({ query: getCoursesQueryValidator }), getAllCourses);
 // Get a single course by id
 router.get("/:id", getCourse);
 
+router.get("/slug/:slug", getCourseSlug);
+
 // Update a published course (or any course in general) - if needed
 router.patch("/:id", updateCourse);
 
@@ -52,6 +55,6 @@ router.delete("/:id", deleteCourse);
 
 // temp
 
-router.post("/admin/migrate-categories", migrateCategoryToArray);
+// router.post("/admin/migrate-categories", migrateCategoryToArray);
 
 export default router;
