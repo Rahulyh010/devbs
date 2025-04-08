@@ -231,10 +231,10 @@ export const getCourse = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const course = await Course.findById(id)
-      .populate({ path: "banner", select: "viewUrl" }) // Populate only viewUrl from banner (if exists)
-      .populate({ path: "previewImage", select: "viewUrl" }) // Populate only viewUrl from previewImage (if exists)
-      .populate({ path: "logoUrl", select: "viewUrl" }) // Populate only viewUrl from logoUrl (if exists);
-      .populate({ path: "category" })
+      .populate({ path: "banner", select: "viewUrl" })
+      .populate({ path: "previewImage", select: "viewUrl" })
+      .populate({ path: "logoUrl", select: "viewUrl" })
+      // Remove the category populate since it doesn't exist in the schema
       .populate({
         path: "tools",
         populate: { path: "logo", select: "viewUrl" },
